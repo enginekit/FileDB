@@ -20,6 +20,15 @@ namespace Numeria.IO
             // Seek the stream to end of header data page
             reader.SetReadPos(initPos + IndexPage.HEADER_SIZE);
 
+
+            //in this version 
+            //each node uses buffer= 16+1+1+4+1+4+4+8+4+2+36 =80 
+            //IndexPage.NODES_PER_PAGE = 50;
+            //so it use 80*50 = 4000 
+
+            //each page has BasePage.PAGE_SIZE = 4096
+
+
             for (int i = 0; i <= indexPage.NodeIndex; i++)
             {
                 var node = indexPage.Nodes[i];
@@ -55,7 +64,7 @@ namespace Numeria.IO
         public static void WriteToFile(IndexPage indexPage, BinaryWriter writer)
         {
             // Seek the stream to the fist byte on page
-            long initPos = writer.MoveTo(Header.HEADER_SIZE + (indexPage.PageID * BasePage.PAGE_SIZE));
+            long initPos = writer.SetWritePos(Header.HEADER_SIZE + (indexPage.PageID * BasePage.PAGE_SIZE));
 
             // Write page header 
             writer.Write((byte)indexPage.Type);
@@ -63,7 +72,7 @@ namespace Numeria.IO
             writer.Write(indexPage.NodeIndex);
 
             // Seek the stream to end of header index page
-            writer.MoveTo(initPos + IndexPage.HEADER_SIZE);
+            writer.SetWritePos(initPos + IndexPage.HEADER_SIZE); //46
 
             for (int i = 0; i <= indexPage.NodeIndex; i++)
             {
@@ -128,7 +137,7 @@ namespace Numeria.IO
             {
                 // Seek the stream at the end of page header
                 reader.SetReadPos(initPos + DataPage.HEADER_SIZE);
-                
+
                 // Read all bytes from page
                 dataPage.DataBlock = reader.ReadBytes(dataPage.DataBlockLength);
             }
@@ -137,7 +146,7 @@ namespace Numeria.IO
         public static void WriteToFile(DataPage dataPage, BinaryWriter writer)
         {
             // Seek the stream on first byte from data page
-            long initPos = writer.MoveTo(Header.HEADER_SIZE + (dataPage.PageID * BasePage.PAGE_SIZE));
+            long initPos = writer.SetWritePos(Header.HEADER_SIZE + (dataPage.PageID * BasePage.PAGE_SIZE));
 
             // Write data page header
             writer.Write((byte)dataPage.Type);
@@ -149,7 +158,7 @@ namespace Numeria.IO
             if (!dataPage.IsEmpty)
             {
                 // Seek the stream at the end of page header
-                writer.MoveTo(initPos + DataPage.HEADER_SIZE);
+                writer.SetWritePos(initPos + DataPage.HEADER_SIZE);
 
                 writer.Write(dataPage.DataBlock, 0, (int)dataPage.DataBlockLength);
             }
