@@ -42,7 +42,7 @@ namespace Numeria.IO
         {
             ID = entity.ID;
             FileName = Path.GetFileNameWithoutExtension(entity.FileName);
-            FileExtension = Path.GetExtension(entity.FileName).Replace(".", "");
+            FileExtension = Path.GetExtension(entity.FileName);
             FileLength = entity.FileLength;
         }
     }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
- 
+
 using System.Text;
 using System.IO;
 
@@ -29,7 +29,7 @@ namespace Numeria.IO
         internal EntryInfo(IndexNode node)
         {
             _id = node.ID;
-            _fileName = node.FileName + "." + node.FileExtension;
+            _fileName = node.FileName + node.FileExtension;
             _mimeType = MimeTypeConverter.Convert(node.FileExtension);
             _fileLength = node.FileLength;
         }
