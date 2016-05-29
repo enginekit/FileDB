@@ -5,9 +5,9 @@ namespace Numeria.IO
 {
     internal class IndexNode
     {
-        public const int FILENAME_SIZE = 41;       // Size of file name string
-        public const int FILE_EXTENSION_SIZE = 5;  // Size of file extension string
-        public const int INDEX_NODE_SIZE = 81;     // Node Index size
+        public const int FILENAME_SIZE = 36;       // Size of file name string
+        //public const int FILE_EXTENSION_SIZE = 5;  // Size of file extension string
+        //public const int INDEX_NODE_SIZE = 81;     // Node Index size
 
         public Guid ID { get; set; }               // 16 bytes
 
@@ -19,9 +19,17 @@ namespace Numeria.IO
         public uint DataPageID { get; set; }       //  4 bytes
 
         // Info
-        public string FileName { get; set; }       // 41 bytes (file name + extension)
-        public string FileExtension { get; set; }  //  5 bytes (only extension without dot ".")
+
+        public DateTime FileDateTime { get; set; } //8 bytes
         public uint FileLength { get; set; }       //  4 bytes
+        public string FileUrl { get; set; } // 2 bytes + 36 bytes
+
+
+        //public string FileName { get; set; }       // 41 bytes (file name + extension)
+        //public string FileExtension { get; set; }  //  5 bytes (only extension without dot ".")
+
+
+
 
         public IndexPage IndexPage { get; set; }
 
@@ -38,8 +46,7 @@ namespace Numeria.IO
         public void UpdateFromEntry(EntryInfo entity)
         {
             ID = entity.ID;
-            FileName = Path.GetFileNameWithoutExtension(entity.FileName);
-            FileExtension = Path.GetExtension(entity.FileName);
+            FileUrl = entity.FileUrl;
             FileLength = entity.FileLength;
         }
     }
