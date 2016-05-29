@@ -58,8 +58,6 @@ namespace Numeria.IO
 
                     sb.AppendFormat("Keys: {0}", indexPage.UsedNodeCount + 1);
                 }
-
-
                 sb.AppendLine();
             }
 

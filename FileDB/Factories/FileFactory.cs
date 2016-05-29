@@ -20,7 +20,7 @@ namespace Numeria.IO
 
             // Create a first fixed index page
             var pageIndex = new IndexPage(0);
-            pageIndex.UsedNodeCount = 0;
+            //pageIndex.UsedNodeCount = 0; //already start at 0
             pageIndex.NextPageID = uint.MaxValue;
 
             // Create first fixed index node, with fixed middle guid

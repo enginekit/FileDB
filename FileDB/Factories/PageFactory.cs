@@ -15,7 +15,7 @@ namespace Numeria.IO
                 throw new FileDBException("PageID {0} is not a Index Page", indexPage.PageID);
 
             indexPage.NextPageID = reader.ReadUInt32();
-            indexPage.UsedNodeCount = reader.ReadByte();
+            indexPage.SetUsedNodeCount(reader.ReadByte());
             // Seek the stream to end of header data page
             reader.SetReadPos(initPos + IndexPage.INDEX_HEADER_SIZE);
 
@@ -26,7 +26,7 @@ namespace Numeria.IO
             //IndexPage.INDEX_HEADER_SIZE =46
             //so => 4050 +46 = 4096 
             //and each page has BasePage.PAGE_SIZE = 4096 => matched
-            
+
             for (int i = 0; i <= indexPage.UsedNodeCount; i++)
             {
                 var node = indexPage.Nodes[i];

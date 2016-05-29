@@ -48,7 +48,7 @@ namespace Numeria.IO
             else
             {
                 // Has more free index on same index page? return them
-                freeIndexPage.UsedNodeCount++; // Reserve space
+                freeIndexPage.IncNodeUsed(); // Reserve space
                 return freeIndexPage;
             }
         }
