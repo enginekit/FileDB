@@ -15,8 +15,7 @@ namespace TestConsole
         static void Main(string[] args)
         {
 
-#if NET20
-
+#if NET20 
             //---------------------------------------------------------------------------
             string testfile = @"d:\\WImageTest\\testdb.dat";
             //test store in the same file name
