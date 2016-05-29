@@ -5,30 +5,39 @@ namespace Numeria.IO
 {
     public class EntryInfo
     {
-        private Guid _id;
-        private string _fileName;
-        private uint _fileLength;
-        private string _mimeType;
-
-        public Guid ID { get { return _id; } }
-        public string FileName { get { return _fileName; } }
-        public uint FileLength { get { return _fileLength; } internal set { _fileLength = value; } }
-        public string MimeType { get { return _mimeType; } }
+        public Guid ID { get; private set; }
+        public string FileUrl { get; private set; }  //file url 
+        public uint FileLength { get; internal set; }
+        public DateTime FileDateTime { get; internal set; }
 
         internal EntryInfo(string fileName)
+            : this(fileName, Guid.NewGuid(), DateTime.Now)
         {
-            _id = Guid.NewGuid();
-            _fileName = Path.GetFileName(fileName);
-            _mimeType = MimeTypeConverter.Convert(Path.GetExtension(_fileName));
-            _fileLength = 0;
+            
         }
+        internal EntryInfo(string fileName, Guid guid, DateTime datetime)
+        {
+            //this version filename must not longer than 36 bytes
+            if (fileName.Length > IndexNode.FILENAME_SIZE)
+            {
+                throw new FileDBException("file length >" + IndexNode.FILENAME_SIZE);
+            }
 
+            ID = Guid.NewGuid();
+            FileUrl = fileName;
+            FileLength = 0;
+            FileDateTime = datetime;
+        }
         internal EntryInfo(IndexNode node)
         {
-            _id = node.ID;
-            _fileName = node.FileName + node.FileExtension;
-            _mimeType = MimeTypeConverter.Convert(node.FileExtension);
-            _fileLength = node.FileLength;
+            ID = node.ID;
+            FileUrl = node.FileUrl;
+            FileLength = node.FileLength;
+            FileDateTime = node.FileDateTime;
+        }
+        public override string ToString()
+        {
+            return this.FileUrl;
         }
     }
 }

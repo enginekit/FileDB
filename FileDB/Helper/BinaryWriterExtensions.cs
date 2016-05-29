@@ -18,8 +18,13 @@ namespace Numeria.IO
         {
             writer.Write(dateTime.Ticks);
         }
-
-        public static long Seek(this BinaryWriter writer, long position)
+        /// <summary>
+        /// move to specific positioin from the begining of stream
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public static long MoveTo(this BinaryWriter writer, long position)
         {
             return writer.BaseStream.Seek(position, SeekOrigin.Begin);
         }

@@ -6,11 +6,10 @@ namespace Numeria.IO
 {
     internal static class BinaryReaderExtensions
     {
-        public static string ReadString(this BinaryReader reader, int size)
+        public static string ReadUtf8String(this BinaryReader reader, int size)
         {
             var bytes = reader.ReadBytes(size);
-            string str = Encoding.UTF8.GetString(bytes);
-            return str.Replace((char)0, ' ').Trim();
+            return Encoding.UTF8.GetString(bytes);
         }
 
         public static Guid ReadGuid(this BinaryReader reader)
@@ -24,8 +23,13 @@ namespace Numeria.IO
             var ticks = reader.ReadInt64();
             return new DateTime(ticks);
         }
-
-        public static long Seek(this BinaryReader reader, long position)
+        /// <summary>
+        /// seek from this beginning
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        public static long SetReadPos(this BinaryReader reader, long position)
         {
             return reader.BaseStream.Seek(position, SeekOrigin.Begin);
         }
