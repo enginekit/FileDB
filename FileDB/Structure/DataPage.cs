@@ -3,7 +3,8 @@
     internal class DataPage : BasePage
     {
         public const int DATA_HEADER_SIZE = 8;
-        public const int DATA_PER_PAGE = 4088;
+        public const int DATA_PER_PAGE = 4088; 
+        //so 4088 +8 => 4096 
 
         public override PageType Type { get { return PageType.Data; } }  //  1 byte
 

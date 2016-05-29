@@ -4,6 +4,9 @@
     {
         public const long INDEX_HEADER_SIZE = 46;
         public const int NODES_PER_PAGE = 50;  
+        //each index use data = 81 
+        //so (81*50) = 4050 
+        //4050+ 46 => 4096 
 
         public override PageType Type { get { return PageType.Index; } }  //  1 byte
         public byte UsedNodeCount { get; set; }                           //  1 byte
