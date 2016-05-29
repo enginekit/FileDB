@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
- 
+
 using System.Text;
 using System.IO;
 
@@ -232,6 +232,19 @@ namespace Numeria.IO
                     _debug = new DebugFile(_engine);
 
                 return _debug;
+            }
+        }
+
+
+        public static void CustomSetHeaderFile(string fileDbSignatureOf6Chars)
+        {
+            if (fileDbSignatureOf6Chars.Length != 6)
+            {
+                throw new FileDBException("file sig char count must=6");
+            }
+            else
+            {
+                Header.FileID = fileDbSignatureOf6Chars;
             }
         }
     }

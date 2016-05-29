@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
- 
+
 using System.Text;
 using System.IO;
 
@@ -11,7 +11,7 @@ namespace Numeria.IO
         public const long LOCKER_POS = 98;
         public const long HEADER_SIZE = 100;
 
-        public const string FileID = "FileDB";        // 6 bytes
+        public static string FileID = "FileDB";        // 6 bytes
         public const short FileVersion = 1;           // 2 bytes
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Numeria.IO
         /// This last has free nodes to be used
         /// </summary>
         public uint FreeIndexPageID { get; set; }      // 4 bytes
-        
+
         /// <summary>
         /// Quando há exclusão de dados, a primeira pagina a ficar vazia infora a esse ponteiro que depois vai aproveitar numa proxima inclusão
         /// When a deleted data, this variable point to first page emtpy. I will use to insert the next data page
@@ -37,7 +37,7 @@ namespace Numeria.IO
         /// Define, in a deleted data, the last deleted page. It's used to make continuos statments of empty page data
         /// </summary>
         public uint LastFreeDataPageID { get; set; }   // 4 bytes
-        
+
         /// <summary>
         /// Ultima página utilizada pelo FileDB (seja para Indice/Data). É utilizado para quando o arquivo precisa crescer (criar nova pagina)
         /// Last used page on FileDB disk (even index or data page). It's used to grow the file db (create new pages)
