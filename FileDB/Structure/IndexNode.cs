@@ -6,9 +6,7 @@ namespace Numeria.IO
     internal class IndexNode
     {
         public const int FILENAME_SIZE = 36;       // Size of file name string
-        //public const int FILE_EXTENSION_SIZE = 5;  // Size of file extension string
-        //public const int INDEX_NODE_SIZE = 81;     // Node Index size
-
+       
         public Guid ID { get; set; }               // 16 bytes
 
         public bool IsDeleted { get; set; }        //  1 byte
@@ -23,13 +21,7 @@ namespace Numeria.IO
         public DateTime FileDateTime { get; set; } //8 bytes
         public uint FileLength { get; set; }       //  4 bytes
         public string FileUrl { get; set; } // 2 bytes + 36 bytes
-
-
-        //public string FileName { get; set; }       // 41 bytes (file name + extension)
-        //public string FileExtension { get; set; }  //  5 bytes (only extension without dot ".")
-
-
-
+ 
 
         public IndexPage IndexPage { get; set; }
 

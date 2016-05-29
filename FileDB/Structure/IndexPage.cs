@@ -3,7 +3,7 @@
     internal class IndexPage : BasePage
     {
         public const long HEADER_SIZE = 46;
-        public const int NODES_PER_PAGE = 50;
+        public const int NODES_PER_PAGE = 50; //not more than 50?
 
         public override PageType Type { get { return PageType.Index; } }  //  1 byte
         public byte NodeIndex { get; set; }                               //  1 byte
@@ -22,7 +22,7 @@
 
             for (int i = 0; i < IndexPage.NODES_PER_PAGE; i++)
             {
-                var node = Nodes[i] = new IndexNode(this);
+                Nodes[i] = new IndexNode(this);
             }
         }
 

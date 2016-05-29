@@ -8,8 +8,8 @@ namespace Numeria.IO
 
         public static void ReadFromFile(IndexPage indexPage, BinaryReader reader)
         {
-            // Seek the stream to the fist byte on page
-            long initPos = reader.Seek(Header.HEADER_SIZE + ((long)indexPage.PageID * BasePage.PAGE_SIZE));
+            // Seek the stream to the first byte on page
+            long initPos = reader.SetReadPos(Header.HEADER_SIZE + (indexPage.PageID * BasePage.PAGE_SIZE));
 
             if (reader.ReadByte() != (byte)PageType.Index)
                 throw new FileDBException("PageID {0} is not a Index Page", indexPage.PageID);
@@ -18,32 +18,32 @@ namespace Numeria.IO
             indexPage.NodeIndex = reader.ReadByte();
 
             // Seek the stream to end of header data page
-            reader.Seek(initPos + IndexPage.HEADER_SIZE);
+            reader.SetReadPos(initPos + IndexPage.HEADER_SIZE);
 
             for (int i = 0; i <= indexPage.NodeIndex; i++)
             {
                 var node = indexPage.Nodes[i];
 
-                node.ID = reader.ReadGuid();
+                node.ID = reader.ReadGuid(); //16
 
-                node.IsDeleted = reader.ReadBoolean();
+                node.IsDeleted = reader.ReadBoolean(); //1 
 
-                node.Right.Index = reader.ReadByte();
-                node.Right.PageID = reader.ReadUInt32();
-                node.Left.Index = reader.ReadByte();
-                node.Left.PageID = reader.ReadUInt32();
+                node.Right.Index = reader.ReadByte(); //1 
+                node.Right.PageID = reader.ReadUInt32(); //4
+                node.Left.Index = reader.ReadByte(); //1 
+                node.Left.PageID = reader.ReadUInt32();//4
 
-                node.DataPageID = reader.ReadUInt32();
+                node.DataPageID = reader.ReadUInt32();//4
 
-                node.FileDateTime = reader.ReadDateTime(); //datetime 8 bytes
-                node.FileLength = reader.ReadUInt32();//file len 4 bytes
+                node.FileDateTime = reader.ReadDateTime();//8
+                node.FileLength = reader.ReadUInt32();//4
 
-                int realUrlNameSize = reader.ReadUInt16(); // 2 bytes
-                if (realUrlNameSize < IndexNode.FILENAME_SIZE)
+                int realUrlNameSize = reader.ReadUInt16();//2
+
+                if (realUrlNameSize < IndexNode.FILENAME_SIZE) //36
                 {
                     string filename = reader.ReadUtf8String(IndexNode.FILENAME_SIZE);
                     node.FileUrl = filename.Substring(0, realUrlNameSize);
-
                 }
                 else
                 {
@@ -55,7 +55,7 @@ namespace Numeria.IO
         public static void WriteToFile(IndexPage indexPage, BinaryWriter writer)
         {
             // Seek the stream to the fist byte on page
-            long initPos = writer.Seek(Header.HEADER_SIZE + ((long)indexPage.PageID * BasePage.PAGE_SIZE));
+            long initPos = writer.MoveTo(Header.HEADER_SIZE + (indexPage.PageID * BasePage.PAGE_SIZE));
 
             // Write page header 
             writer.Write((byte)indexPage.Type);
@@ -63,27 +63,27 @@ namespace Numeria.IO
             writer.Write(indexPage.NodeIndex);
 
             // Seek the stream to end of header index page
-            writer.Seek(initPos + IndexPage.HEADER_SIZE);
+            writer.MoveTo(initPos + IndexPage.HEADER_SIZE);
 
             for (int i = 0; i <= indexPage.NodeIndex; i++)
             {
                 var node = indexPage.Nodes[i];
 
-                writer.Write(node.ID);
+                writer.Write(node.ID); //16
 
-                writer.Write(node.IsDeleted);
+                writer.Write(node.IsDeleted); //1
 
-                writer.Write(node.Right.Index);
-                writer.Write(node.Right.PageID);
-                writer.Write(node.Left.Index);
-                writer.Write(node.Left.PageID);
+                writer.Write(node.Right.Index); //1
+                writer.Write(node.Right.PageID);  //4
+                writer.Write(node.Left.Index);//1
+                writer.Write(node.Left.PageID); //4
 
-                writer.Write(node.DataPageID);
+                writer.Write(node.DataPageID); //4
 
-                writer.Write(node.FileDateTime);  //date time 8 bytes
-                writer.Write(node.FileLength); //file len 4  bytes
+                writer.Write(node.FileDateTime); //8
+                writer.Write(node.FileLength); //4
 
-                byte[] fileUrlBytes = System.Text.Encoding.UTF8.GetBytes(node.FileUrl);
+                byte[] fileUrlBytes = System.Text.Encoding.UTF8.GetBytes(node.FileUrl); //2
                 if (fileUrlBytes.Length >= ushort.MaxValue)
                 {
                     throw new FileDBException("filename is too long!");
@@ -91,7 +91,7 @@ namespace Numeria.IO
 
                 writer.Write((ushort)fileUrlBytes.Length); //2 bytes
                 //this version write only first IndexNode.FILENAME_SIZE  ***
-                int diff = fileUrlBytes.Length - IndexNode.FILENAME_SIZE;
+                int diff = fileUrlBytes.Length - IndexNode.FILENAME_SIZE; //36
                 if (diff >= 0)
                 {
                     writer.Write(fileUrlBytes, 0, IndexNode.FILENAME_SIZE);
@@ -114,7 +114,7 @@ namespace Numeria.IO
         public static void ReadFromFile(DataPage dataPage, BinaryReader reader, bool onlyHeader)
         {
             // Seek the stream on first byte from data page
-            long initPos = reader.Seek(Header.HEADER_SIZE + ((long)dataPage.PageID * BasePage.PAGE_SIZE));
+            long initPos = reader.SetReadPos(Header.HEADER_SIZE + (dataPage.PageID * BasePage.PAGE_SIZE));
 
             if (reader.ReadByte() != (byte)PageType.Data)
                 throw new FileDBException("PageID {0} is not a Data Page", dataPage.PageID);
@@ -127,8 +127,8 @@ namespace Numeria.IO
             if (!dataPage.IsEmpty && !onlyHeader)
             {
                 // Seek the stream at the end of page header
-                reader.Seek(initPos + DataPage.HEADER_SIZE);
-
+                reader.SetReadPos(initPos + DataPage.HEADER_SIZE);
+                
                 // Read all bytes from page
                 dataPage.DataBlock = reader.ReadBytes(dataPage.DataBlockLength);
             }
@@ -137,7 +137,7 @@ namespace Numeria.IO
         public static void WriteToFile(DataPage dataPage, BinaryWriter writer)
         {
             // Seek the stream on first byte from data page
-            long initPos = writer.Seek(Header.HEADER_SIZE + ((long)dataPage.PageID * BasePage.PAGE_SIZE));
+            long initPos = writer.MoveTo(Header.HEADER_SIZE + (dataPage.PageID * BasePage.PAGE_SIZE));
 
             // Write data page header
             writer.Write((byte)dataPage.Type);
@@ -149,7 +149,7 @@ namespace Numeria.IO
             if (!dataPage.IsEmpty)
             {
                 // Seek the stream at the end of page header
-                writer.Seek(initPos + DataPage.HEADER_SIZE);
+                writer.MoveTo(initPos + DataPage.HEADER_SIZE);
 
                 writer.Write(dataPage.DataBlock, 0, (int)dataPage.DataBlockLength);
             }
@@ -176,7 +176,7 @@ namespace Numeria.IO
         public static BasePage GetBasePage(uint pageID, BinaryReader reader)
         {
             // Seek the stream at begin of page
-            long initPos = reader.Seek(Header.HEADER_SIZE + ((long)pageID * BasePage.PAGE_SIZE));
+            long initPos = reader.SetReadPos(Header.HEADER_SIZE + (pageID * BasePage.PAGE_SIZE));
 
             if (reader.ReadByte() == (byte)PageType.Index)
                 return GetIndexPage(pageID, reader);

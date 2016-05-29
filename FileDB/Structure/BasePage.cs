@@ -15,7 +15,7 @@
 
     internal abstract class BasePage
     {
-        public const long PAGE_SIZE = 4096;
+        public const int PAGE_SIZE = 4096;
 
         public uint PageID { get; set; }
         public abstract PageType Type { get; }
