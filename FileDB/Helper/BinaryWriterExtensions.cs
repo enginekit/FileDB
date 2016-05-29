@@ -24,7 +24,7 @@ namespace Numeria.IO
         /// <param name="writer"></param>
         /// <param name="position"></param>
         /// <returns></returns>
-        public static long MoveTo(this BinaryWriter writer, long position)
+        public static long SetWritePos(this BinaryWriter writer, long position)
         {
             return writer.BaseStream.Seek(position, SeekOrigin.Begin);
         }
