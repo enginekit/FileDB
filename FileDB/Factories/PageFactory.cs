@@ -35,9 +35,20 @@ namespace Numeria.IO
 
                 node.DataPageID = reader.ReadUInt32();
 
-                node.FileName = reader.ReadString(IndexNode.FILENAME_SIZE);
-                node.FileExtension = reader.ReadString(IndexNode.FILE_EXTENSION_SIZE);
-                node.FileLength = reader.ReadUInt32();
+                node.FileDateTime = reader.ReadDateTime(); //datetime 8 bytes
+                node.FileLength = reader.ReadUInt32();//file len 4 bytes
+
+                int realUrlNameSize = reader.ReadUInt16(); // 2 bytes
+                if (realUrlNameSize < IndexNode.FILENAME_SIZE)
+                {
+                    string filename = reader.ReadUtf8String(IndexNode.FILENAME_SIZE);
+                    node.FileUrl = filename.Substring(0, realUrlNameSize);
+
+                }
+                else
+                {
+                    node.FileUrl = reader.ReadUtf8String(IndexNode.FILENAME_SIZE);
+                }
             }
         }
 
@@ -69,9 +80,29 @@ namespace Numeria.IO
 
                 writer.Write(node.DataPageID);
 
-                writer.Write(node.FileName.ToBytes(IndexNode.FILENAME_SIZE));
-                writer.Write(node.FileExtension.ToBytes(IndexNode.FILE_EXTENSION_SIZE));
-                writer.Write(node.FileLength);
+                writer.Write(node.FileDateTime);  //date time 8 bytes
+                writer.Write(node.FileLength); //file len 4  bytes
+
+                byte[] fileUrlBytes = System.Text.Encoding.UTF8.GetBytes(node.FileUrl);
+                if (fileUrlBytes.Length >= ushort.MaxValue)
+                {
+                    throw new FileDBException("filename is too long!");
+                }
+
+                writer.Write((ushort)fileUrlBytes.Length); //2 bytes
+                //this version write only first IndexNode.FILENAME_SIZE  ***
+                int diff = fileUrlBytes.Length - IndexNode.FILENAME_SIZE;
+                if (diff >= 0)
+                {
+                    writer.Write(fileUrlBytes, 0, IndexNode.FILENAME_SIZE);
+                }
+                else
+                {
+                    writer.Write(fileUrlBytes);
+                    //diff                     
+                    //write padding
+                    writer.Write(new byte[-diff]);
+                }
             }
 
         }
