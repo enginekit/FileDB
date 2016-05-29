@@ -11,6 +11,10 @@ namespace Numeria.IO
         public DateTime FileDateTime { get; internal set; }
 
         internal EntryInfo(string fileName)
+            : this(fileName, Guid.NewGuid())
+        {
+        }
+        internal EntryInfo(string fileName, Guid guid)
         {
             //this version filename must not longer than 36 bytes
             if (fileName.Length > IndexNode.FILENAME_SIZE)
@@ -19,13 +23,7 @@ namespace Numeria.IO
             }
 
             ID = Guid.NewGuid();
-            FileUrl = Path.GetFileName(fileName);
-            FileLength = 0;
-        }
-        internal EntryInfo(string fileName, Guid guid)
-        {
-            ID = guid;
-            FileUrl = Path.GetFileName(fileName);
+            FileUrl = fileName;
             FileLength = 0;
         }
         internal EntryInfo(IndexNode node)
