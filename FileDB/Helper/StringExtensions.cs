@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
- 
-using System.Text;
-
 namespace Numeria.IO
 {
     internal static class StringExtensions
@@ -13,7 +9,7 @@ namespace Numeria.IO
                 return new byte[size];
 
             var buffer = new byte[size];
-            var strbytes = Encoding.UTF8.GetBytes(str);
+            var strbytes = System.Text.Encoding.UTF8.GetBytes(str);
 
             Array.Copy(strbytes, buffer, size > strbytes.Length ? strbytes.Length : size);
 

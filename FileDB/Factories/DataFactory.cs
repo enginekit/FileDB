@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
- 
-using System.Text;
 using System.IO;
 
 namespace Numeria.IO
@@ -19,9 +16,9 @@ namespace Numeria.IO
 
                 // If the next page is MAX, fix too LastFreeData
 
-                if(engine.Header.FreeDataPageID == uint.MaxValue)
+                if (engine.Header.FreeDataPageID == uint.MaxValue)
                     engine.Header.LastFreeDataPageID = uint.MaxValue;
-                
+
                 return startPage.PageID;
             }
             else // Don't have free data pages, create new one.

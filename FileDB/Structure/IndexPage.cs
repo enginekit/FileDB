@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
- 
-using System.Text;
-using System.IO;
-
-namespace Numeria.IO
+﻿namespace Numeria.IO
 {
     internal class IndexPage : BasePage
     {

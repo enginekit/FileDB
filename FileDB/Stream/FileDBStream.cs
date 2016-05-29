@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-
 namespace Numeria.IO
 {
     public sealed class FileDBStream : Stream

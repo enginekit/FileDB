@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using System.Text;
-
-namespace Numeria.IO
+﻿namespace Numeria.IO
 {
     internal class MimeTypeConverter
     {

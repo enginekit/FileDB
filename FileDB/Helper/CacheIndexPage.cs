@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
- 
-using System.Text;
 using System.IO;
 
 namespace Numeria.IO
@@ -21,7 +19,7 @@ namespace Numeria.IO
         {
             _reader = reader;
             _writer = writer;
-            _cache = new Dictionary<uint,IndexPage>();
+            _cache = new Dictionary<uint, IndexPage>();
             _rootPageID = rootPageID;
         }
 
@@ -31,7 +29,7 @@ namespace Numeria.IO
                 return _cache[pageID];
 
             var indexPage = PageFactory.GetIndexPage(pageID, _reader);
-            
+
             AddPage(indexPage, false);
 
             return indexPage;
@@ -44,9 +42,9 @@ namespace Numeria.IO
 
         public void AddPage(IndexPage indexPage, bool markAsDirty)
         {
-            if(!_cache.ContainsKey(indexPage.PageID))
+            if (!_cache.ContainsKey(indexPage.PageID))
             {
-                if(_cache.Count >= CACHE_SIZE)
+                if (_cache.Count >= CACHE_SIZE)
                 {
                     // Remove fist page that are not the root page (because I use too much)
                     var pageToRemove = _cache.First(x => x.Key != _rootPageID);
@@ -62,8 +60,8 @@ namespace Numeria.IO
 
                 _cache.Add(indexPage.PageID, indexPage);
             }
-            
-            if(markAsDirty)
+
+            if (markAsDirty)
                 indexPage.IsDirty = true;
         }
 
