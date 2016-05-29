@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
@@ -35,7 +35,16 @@ namespace Numeria.IO
                 return db.Store(fileName, input);
             }
         }
-
+        public static EntryInfo Store(string dbFileName, string fileName, byte[] inputBuffer)
+        {
+            using (MemoryStream ms = new MemoryStream(inputBuffer))
+            using (var db = new FileDB(dbFileName, FileAccess.ReadWrite))
+            {
+                EntryInfo en = db.Store(fileName, ms);
+                ms.Close();
+                return en;
+            }
+        }
         /// <summary>
         /// Read a file inside the database file
         /// </summary>
@@ -119,7 +128,7 @@ namespace Numeria.IO
 
             using (FileStream fileStream = new FileStream(dbFileName, FileMode.CreateNew, FileAccess.Write))
             {
-                using(BinaryWriter writer = new BinaryWriter(fileStream))
+                using (BinaryWriter writer = new BinaryWriter(fileStream))
                 {
                     FileFactory.CreateEmptyFile(writer);
                 }
