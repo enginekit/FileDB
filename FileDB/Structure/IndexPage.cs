@@ -2,11 +2,11 @@
 {
     internal class IndexPage : BasePage
     {
-        public const long HEADER_SIZE = 46;
+        public const long INDEX_HEADER_SIZE = 46;
         public const int NODES_PER_PAGE = 50;  
 
         public override PageType Type { get { return PageType.Index; } }  //  1 byte
-        public byte NodeIndex { get; set; }                               //  1 byte
+        public byte UsedNodeCount { get; set; }                           //  1 byte
 
         public IndexNode[] Nodes { get; set; }
 
@@ -16,7 +16,7 @@
         {
             PageID = pageID;
             NextPageID = uint.MaxValue;
-            NodeIndex = 0;
+            UsedNodeCount = 0;
             Nodes = new IndexNode[IndexPage.NODES_PER_PAGE];
             IsDirty = false;
 
