@@ -1,4 +1,4 @@
-﻿using System; 
+﻿using System;
 using System.IO;
 
 namespace Numeria.IO
@@ -30,7 +30,7 @@ namespace Numeria.IO
             // Seek the stream on 0 position to save header
             writer.BaseStream.Seek(0, SeekOrigin.Begin);
 
-            writer.Write(Header.FileID.ToBytes(Header.FileID.Length));
+            writer.Write(ToFixedBytes(Header.FileID, Header.FileID.Length));
             writer.Write(Header.FileVersion);
 
             writer.Write(header.IndexRootPageID);
@@ -40,5 +40,16 @@ namespace Numeria.IO
             writer.Write(header.LastPageID);
         }
 
+        static byte[] ToFixedBytes(string str, int size)
+        {
+            if (string.IsNullOrEmpty(str))
+                return new byte[size]; 
+            //fixed size
+            var buffer = new byte[size];
+            var strbytes = System.Text.Encoding.UTF8.GetBytes(str);
+            Array.Copy(strbytes, buffer, size > strbytes.Length ? strbytes.Length : size);
+
+            return buffer;
+        }
     }
 }
