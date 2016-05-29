@@ -32,7 +32,7 @@ namespace Numeria.IO
             var freeIndexPage = CacheIndexPage.GetPage(Header.FreeIndexPageID);
 
             // Check if "free page" has no more index to be used
-            if (freeIndexPage.NodeIndex >= IndexPage.NODES_PER_PAGE - 1)
+            if (freeIndexPage.UsedNodeCount >= IndexPage.NODES_PER_PAGE - 1)
             {
                 Header.LastPageID++; // Take last page and increase
                 Header.IsDirty = true;
@@ -48,7 +48,7 @@ namespace Numeria.IO
             else
             {
                 // Has more free index on same index page? return them
-                freeIndexPage.NodeIndex++; // Reserve space
+                freeIndexPage.UsedNodeCount++; // Reserve space
                 return freeIndexPage;
             }
         }
@@ -163,7 +163,7 @@ namespace Numeria.IO
 
             while (cont)
             {
-                for (int i = 0; i <= pageIndex.NodeIndex; i++)
+                for (int i = 0; i <= pageIndex.UsedNodeCount; i++)
                 {
                     // Convert node (if is not logicaly deleted) to Entry
                     var node = pageIndex.Nodes[i];

@@ -43,10 +43,10 @@ namespace Numeria.IO
         {
             // Must insert my new nodo
             var pageIndex = engine.GetFreeIndexPage();
-            var newNode = pageIndex.Nodes[pageIndex.NodeIndex];
+            var newNode = pageIndex.Nodes[pageIndex.UsedNodeCount];
 
             baseLink.PageID = pageIndex.PageID;
-            baseLink.Index = pageIndex.NodeIndex;
+            baseLink.Index = pageIndex.UsedNodeCount;
 
             newNode.UpdateFromEntry(entry);
             newNode.DataPageID = DataFactory.GetStartDataPageID(engine);
