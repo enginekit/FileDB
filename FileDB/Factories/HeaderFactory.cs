@@ -11,7 +11,7 @@ namespace Numeria.IO
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
 
             // Make same validation on header file
-            if (reader.ReadString(Header.FileID.Length) != Header.FileID)
+            if (reader.ReadUtf8String(Header.FileID.Length) != Header.FileID)
                 throw new FileDBException("The file is not a valid storage archive");
 
             if (reader.ReadInt16() != Header.FileVersion)

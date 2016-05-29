@@ -159,8 +159,8 @@ namespace Numeria.IO
             foreach (var file in files)
             {
                 var fileName = filePattern.Replace("{id}", file.ID.ToString())
-                    .Replace("{filename}", Path.GetFileNameWithoutExtension(file.FileName))
-                    .Replace("{extension}", Path.GetExtension(file.FileName).Replace(".", ""));
+                    .Replace("{filename}", Path.GetFileNameWithoutExtension(file.FileUrl))
+                    .Replace("{extension}", Path.GetExtension(file.FileUrl).Replace(".", ""));
 
                 Read(file.ID, Path.Combine(directory, fileName));
             }

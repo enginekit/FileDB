@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
- 
+
 using System.Text;
 using System.IO;
 
@@ -26,10 +26,10 @@ namespace Extrator
 
             using (var db = new Numeria.IO.FileDB(file, FileAccess.Read))
             {
-                var entities = db.ListFiles();
+                Numeria.IO.EntryInfo[] entities = db.ListFiles();
                 foreach (var entity in entities)
-                {
-                    var filename = UniqueFilename(dir, entity.FileName);
+                { 
+                    var filename = UniqueFilename(dir, entity.FileUrl);
                     Console.WriteLine("Extrating.... " + filename);
                     db.Read(entity.ID, filename);
                 }

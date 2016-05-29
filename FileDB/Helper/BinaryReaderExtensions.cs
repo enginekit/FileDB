@@ -6,11 +6,10 @@ namespace Numeria.IO
 {
     internal static class BinaryReaderExtensions
     {
-        public static string ReadString(this BinaryReader reader, int size)
+        public static string ReadUtf8String(this BinaryReader reader, int size)
         {
             var bytes = reader.ReadBytes(size);
-            string str = Encoding.UTF8.GetString(bytes);
-            return str.Replace((char)0, ' ').Trim();
+            return Encoding.UTF8.GetString(bytes); 
         }
 
         public static Guid ReadGuid(this BinaryReader reader)

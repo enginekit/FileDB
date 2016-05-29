@@ -30,8 +30,7 @@ namespace Numeria.IO
             indexNode.Right = new IndexLink();
             indexNode.Left = new IndexLink();
             indexNode.DataPageID = uint.MaxValue;
-            indexNode.FileName = string.Empty;
-            indexNode.FileExtension = string.Empty;
+            indexNode.FileUrl = string.Empty;             
 
             PageFactory.WriteToFile(pageIndex, writer);
 
