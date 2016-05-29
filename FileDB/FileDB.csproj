@@ -47,12 +47,10 @@
     <Compile Include="Helper\BinaryReaderExtensions.cs" />
     <Compile Include="Helper\BinaryWriterExtensions.cs" />
     <Compile Include="Helper\CacheIndexPage.cs" />
-    <Compile Include="Helper\Range.cs" />
     <Compile Include="Helper\IOExceptionExtensions.cs" />
     <Compile Include="Helper\DebugFile.cs" />
     <Compile Include="Helper\FileDBExtensions.cs" />
     <Compile Include="Helper\MimeTypeConverter.cs" />
-    <Compile Include="Helper\StringExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SomeLinq.cs" />
     <Compile Include="Stream\FileDBStream.cs" />

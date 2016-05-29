@@ -86,12 +86,6 @@
     <Compile Include="..\FileDB\Helper\MimeTypeConverter.cs">
       <Link>FileDB\MimeTypeConverter.cs</Link>
     </Compile>
-    <Compile Include="..\FileDB\Helper\Range.cs">
-      <Link>FileDB\Range.cs</Link>
-    </Compile>
-    <Compile Include="..\FileDB\Helper\StringExtensions.cs">
-      <Link>FileDB\StringExtensions.cs</Link>
-    </Compile>
     <Compile Include="..\FileDB\SomeLinq.cs">
       <Link>FileDB\SomeLinq.cs</Link>
     </Compile>
