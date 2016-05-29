@@ -7,7 +7,7 @@ namespace Numeria.IO
     {
         public static uint GetStartDataPageID(Engine engine)
         {
-            if (engine.Header.FreeDataPageID != uint.MaxValue) // I have free page inside the disk file. Use it
+            if (engine.Header.FreeDataPageID != uint.MaxValue) // we have free page inside the disk file. Use it
             {
                 // Take the first free data page
                 var startPage = PageFactory.GetDataPage(engine.Header.FreeDataPageID, engine.Reader, true);
@@ -21,7 +21,7 @@ namespace Numeria.IO
 
                 return startPage.PageID;
             }
-            else // Don't have free data pages, create new one.
+            else // if we don't have free data pages, then create new one.
             {
                 engine.Header.LastPageID++;
                 return engine.Header.LastPageID;
@@ -61,7 +61,7 @@ namespace Numeria.IO
             uint totalBytes = 0;
 
             int read = 0;
-            int dataPerPage = (int)DataPage.DATA_PER_PAGE;
+            int dataPerPage = DataPage.DATA_PER_PAGE;
 
             while ((read = stream.Read(buffer, 0, dataPerPage)) > 0)
             {
@@ -87,7 +87,7 @@ namespace Numeria.IO
                 dataPage.NextPageID = uint.MaxValue;
             }
 
-            // Salve the last page on disk
+            // Save the last page on disk
             PageFactory.WriteToFile(dataPage, engine.Writer);
 
             // Save on node index that file length
@@ -113,7 +113,7 @@ namespace Numeria.IO
 
         public static void MarkAsEmpty(uint firstPageID, Engine engine)
         {
-            var dataPage = PageFactory.GetDataPage(firstPageID, engine.Reader, true);
+            DataPage dataPage = PageFactory.GetDataPage(firstPageID, engine.Reader, true);
             uint lastPageID = uint.MaxValue;
             var cont = true;
 

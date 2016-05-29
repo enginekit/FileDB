@@ -3,10 +3,16 @@ using System.IO;
 
 namespace Numeria.IO
 {
+    /// <summary>
+    /// for a single file
+    /// </summary>
     internal class IndexNode
     {
-        public const int FILENAME_SIZE = 36;       // Size of file name string
-       
+        /// <summary>
+        /// 43 bytes
+        /// </summary>
+        public const int FILENAME_SIZE = 43;       // Size of file name string
+
         public Guid ID { get; set; }               // 16 bytes
 
         public bool IsDeleted { get; set; }        //  1 byte
@@ -17,11 +23,9 @@ namespace Numeria.IO
         public uint DataPageID { get; set; }       //  4 bytes
 
         // Info
-
-        public DateTime FileDateTime { get; set; } //8 bytes
-        public uint FileLength { get; set; }       //  4 bytes
-        public string FileUrl { get; set; } // 2 bytes + 36 bytes
- 
+        public ushort FileMetaDataLength { get; set; }//2  bytes
+        public uint FileLength { get; set; }          //4 bytes
+        public string FileUrl { get; set; }           //43 bytes
 
         public IndexPage IndexPage { get; set; }
 

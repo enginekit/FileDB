@@ -11,7 +11,7 @@
         public override PageType Type { get { return PageType.Index; } }  //  1 byte
         public byte UsedNodeCount { get; private set; }                           //  1 byte
 
-        public IndexNode[] Nodes { get; set; }
+        public IndexNode[] Nodes { get; private set; }
 
         public bool IsDirty { get; set; }
 

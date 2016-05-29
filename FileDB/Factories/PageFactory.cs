@@ -42,19 +42,18 @@ namespace Numeria.IO
 
                 node.DataPageID = reader.ReadUInt32();//4
 
-                node.FileDateTime = reader.ReadDateTime();//8
+                node.FileMetaDataLength = reader.ReadUInt16();//2
                 node.FileLength = reader.ReadUInt32();//4
 
-                int realUrlNameSize = reader.ReadUInt16();//2
-
-                if (realUrlNameSize < IndexNode.FILENAME_SIZE) //36
+                int filenameCount = reader.ReadByte(); //1
+                if (filenameCount > IndexNode.FILENAME_SIZE)
                 {
-                    string filename = reader.ReadUtf8String(IndexNode.FILENAME_SIZE);
-                    node.FileUrl = filename.Substring(0, realUrlNameSize);
+                    node.FileUrl = reader.ReadUtf8String(IndexNode.FILENAME_SIZE);
                 }
                 else
                 {
-                    node.FileUrl = reader.ReadUtf8String(IndexNode.FILENAME_SIZE);
+                    string filename = reader.ReadUtf8String(IndexNode.FILENAME_SIZE);
+                    node.FileUrl = filename.Substring(0, filenameCount);
                 }
             }
         }
@@ -87,24 +86,26 @@ namespace Numeria.IO
 
                 writer.Write(node.DataPageID); //4
 
-                writer.Write(node.FileDateTime); //8
+                writer.Write(node.FileMetaDataLength); //2
                 writer.Write(node.FileLength); //4
 
-                byte[] fileUrlBytes = System.Text.Encoding.UTF8.GetBytes(node.FileUrl); //2
+                byte[] fileUrlBytes = System.Text.Encoding.UTF8.GetBytes(node.FileUrl);
                 if (fileUrlBytes.Length >= ushort.MaxValue)
                 {
                     throw new FileDBException("filename is too long!");
                 }
 
-                writer.Write((ushort)fileUrlBytes.Length); //2 bytes
-                //this version write only first IndexNode.FILENAME_SIZE  ***
-                int diff = fileUrlBytes.Length - IndexNode.FILENAME_SIZE; //36
+
+                int diff = fileUrlBytes.Length - IndexNode.FILENAME_SIZE;
                 if (diff >= 0)
                 {
+                    //limit 
+                    writer.Write((byte)(IndexNode.FILENAME_SIZE + 1)); //1
                     writer.Write(fileUrlBytes, 0, IndexNode.FILENAME_SIZE);
                 }
                 else
                 {
+                    writer.Write((byte)(fileUrlBytes.Length));
                     writer.Write(fileUrlBytes);
                     //diff                     
                     //write padding
