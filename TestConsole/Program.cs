@@ -15,15 +15,15 @@ namespace TestConsole
         static void Main(string[] args)
         {
 
-#if NET20 
+#if NET20
             //---------------------------------------------------------------------------
             string testfile = @"d:\\WImageTest\\testdb.dat";
             //test store in the same file name
-            EntryInfo en1 = FileDB.Store(testfile, "/usr/test/d1", GenerateTestDataBuffer("hello!...1"));
-            EntryInfo en2 = FileDB.Store(testfile, "/usr/test/d1", GenerateTestDataBuffer("hello!...2"));
-            EntryInfo en3 = FileDB.Store(testfile, "/usr/test/d1", GenerateTestDataBuffer("hello!...3"));
-            EntryInfo en4 = FileDB.Store(testfile, "/usr/test/d1", GenerateTestDataBuffer("hello!...4"));
-            EntryInfo en5 = FileDB.Store(testfile, "/usr/test/d1", GenerateTestDataBuffer("hello!...5"));
+            EntryInfo en1 = FileDB.Store(testfile, "/usr/test/d1/aaaaaaaaa/bbbbbbbbb/ccccccccddddddddddddddd.a.txt", GenerateTestDataBuffer("hello!...1"));
+            EntryInfo en2 = FileDB.Store(testfile, "/usr/test/d1/aaaaaaaaa/bbbbbbbbb/ccccccccddddddddddddddd.a.txt", GenerateTestDataBuffer("hello!...2"));
+            EntryInfo en3 = FileDB.Store(testfile, "/usr/test/d1/aaaaaaaaa/bbbbbbbbb/ccccccccddddddddddddddd.a.txt", GenerateTestDataBuffer("hello!...3"));
+            EntryInfo en4 = FileDB.Store(testfile, "/usr/test/d1/aaaaaaaaa/bbbbbbbbb/ccccccccddddddddddddddd.a.txt", GenerateTestDataBuffer("hello!...4"));
+            EntryInfo en5 = FileDB.Store(testfile, "/usr/test/d1/aaaaaaaaa/bbbbbbbbb/ccccccccddddddddddddddd.a.txt", GenerateTestDataBuffer("hello!...5"));
             //---------------------------------------------------------------------------
             EntryInfo[] fileList = FileDB.ListFiles(testfile);
             //foreach (var f in fileList)
