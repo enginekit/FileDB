@@ -26,6 +26,7 @@ namespace Numeria.IO
         public ushort FileMetaDataLength { get; set; }//2  bytes
         public uint FileLength { get; set; }          //4 bytes
         public string FileUrl { get; set; }           //43 bytes
+        public bool HasLongFileName { get; set; }  //1
 
         public IndexPage IndexPage { get; set; }
 
@@ -44,6 +45,7 @@ namespace Numeria.IO
             ID = entity.ID;
             FileUrl = entity.FileUrl;
             FileLength = entity.FileLength;
+            HasLongFileName = entity.HasLongFileName;
         }
     }
 }

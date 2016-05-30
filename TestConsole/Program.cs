@@ -26,6 +26,15 @@ namespace TestConsole
             EntryInfo en5 = FileDB.Store(testfile, "/usr/test/d1/aaaaaaaaa/bbbbbbbbb/ccccccccddddddddddddddd.a.txt", GenerateTestDataBuffer("hello!...5"));
             //---------------------------------------------------------------------------
             EntryInfo[] fileList = FileDB.ListFiles(testfile);
+
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                EntryInfo enInfo = FileDB.Read(testfile, en5.ID, ms);
+                string content = System.Text.Encoding.UTF8.GetString(ms.ToArray());
+                ms.Close();
+            }
+
             //foreach (var f in fileList)
             //{   
             //    FileDB.Delete(testfile, en1.ID);

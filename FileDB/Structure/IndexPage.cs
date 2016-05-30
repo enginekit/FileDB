@@ -2,7 +2,7 @@
 {
     internal class IndexPage : BasePage
     {
-        public const long INDEX_HEADER_SIZE = 46;
+        public const int INDEX_HEADER_SIZE = 46;
         public const int NODES_PER_PAGE = 50;
         //each index use data = 81 
         //so (81*50) = 4050 
@@ -18,8 +18,7 @@
         public IndexPage(uint pageID)
         {
             PageID = pageID;
-            NextPageID = uint.MaxValue;
-            //UsedNodeCount = 0;
+            NextPageID = uint.MaxValue; 
             Nodes = new IndexNode[IndexPage.NODES_PER_PAGE];
             IsDirty = false;
 

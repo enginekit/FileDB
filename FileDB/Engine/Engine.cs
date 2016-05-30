@@ -53,7 +53,7 @@ namespace Numeria.IO
             }
         }
 
-        public DataPage GetPageData(uint pageID)
+        public DataPage GetDataPage(uint pageID)
         {
             if (pageID == Header.LastPageID) // Page does not exists in disk
             {
@@ -76,10 +76,12 @@ namespace Numeria.IO
             var indexNode = IndexFactory.BinaryInsert(entry, rootIndexNode, this);
 
             // In this moment, the index are ready and saved. I use to add the file
-            DataFactory.InsertFile(indexNode, stream, this);
+            DataFactory.InsertFile(indexNode, entry, stream, this);
 
             // Update entry information with file length (I know file length only after read all)
+            entry.FileMetadataLength = indexNode.FileMetaDataLength;
             entry.FileLength = indexNode.FileLength;
+
 
             // Only after insert all stream file I confirm that index node is valid
             indexNode.IsDeleted = false;
@@ -115,7 +117,7 @@ namespace Numeria.IO
             EntryInfo entry = new EntryInfo(indexNode);
 
             // Read data from the index pointer to stream
-            DataFactory.ReadFile(indexNode, stream, this);
+            DataFactory.ReadFile(indexNode, entry, stream, this);
 
             return entry;
         }
