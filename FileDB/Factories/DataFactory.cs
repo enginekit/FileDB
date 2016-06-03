@@ -180,6 +180,7 @@ namespace Numeria.IO
                 //reset  for next
                 dataFreeInPage = DataPage.DATA_PER_PAGE;
                 writePos = 0;
+                isFirstRound = false;
                 //----------------------------------------------
             }
 
