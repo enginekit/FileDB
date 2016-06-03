@@ -73,6 +73,20 @@ namespace Numeria.IO
             }
         }
 
+        public static EntryInfo ReadMetadata(string dbFileName, Guid id)
+        {
+            using (var db = new FileDB(dbFileName, FileAccess.Read))
+            {
+                return db.ReadMetadata(id);
+            }
+        }
+        public static void ReadFileContent(string dbFileName, EntryInfo entry, Stream output)
+        {
+            using (var db = new FileDB(dbFileName, FileAccess.Read))
+            {
+                db.ReadContent(entry, output);
+            }
+        }
         /// <summary>
         /// Delete a file inside a database
         /// </summary>

@@ -27,11 +27,18 @@ namespace TestConsole
             //---------------------------------------------------------------------------
             EntryInfo[] fileList = FileDB.ListFiles(testfile);
 
-
             using (MemoryStream ms = new MemoryStream())
             {
-                EntryInfo enInfo = FileDB.Read(testfile, en5.ID, ms);
+                //test read file and metadata
+                //EntryInfo enInfo = FileDB.Read(testfile, en5.ID, ms); 
+
+                FileDB.ReadFileContent(testfile, fileList[0], ms);
                 string content = System.Text.Encoding.UTF8.GetString(ms.ToArray());
+
+                //read only file metadata
+                //EntryInfo enInfo = FileDB.ReadMetadata(testfile, en5.ID);
+
+
                 ms.Close();
             }
 

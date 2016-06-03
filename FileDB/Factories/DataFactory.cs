@@ -198,7 +198,45 @@ namespace Numeria.IO
             node.FileLength = fileLength;
 
         }
+        //read file meta data only
+        public static void ReadFileMetadata(IndexNode node, EntryInfo entry, Engine engine)
+        {
+            var dataPage = PageFactory.GetDataPage(node.DataPageID, engine.Reader, false);
+            int metaDataStartPos = 0;
+            int metaDataLength = entry.FileMetadataLength;
+            int dataStartPos = metaDataStartPos + metaDataLength;
 
+            int curReadPos = 0;
+            if (dataPage != null && entry.FileMetadataLength > 0)
+            {
+                //first round
+                //read file meta data
+                while (curReadPos < metaDataLength)
+                {
+                    //1.marker
+                    byte marker = ReadByte(dataPage.DataBlock, curReadPos, out curReadPos);
+                    switch (marker)
+                    {
+                        case 1://date time
+                            long binaryTime = ReadInt64(dataPage.DataBlock, curReadPos, out curReadPos);
+                            entry.FileDateTime = DateTime.FromBinary(binaryTime);
+                            break;
+                        case 2:
+                            //long filename
+                            int nameLen = (int)ReadUInt16(dataPage.DataBlock, curReadPos, out curReadPos);
+                            byte[] nameBuffer = new byte[nameLen];
+                            Array.Copy(dataPage.DataBlock, curReadPos, nameBuffer, 0, nameLen);
+                            entry.FileUrl = System.Text.Encoding.UTF8.GetString(nameBuffer);
+                            curReadPos += nameLen;
+                            break;
+                        default:
+                            throw new NotSupportedException();
+                    }
+                }
+            }
+            //-----------------------------------
+            //not read file part 
+        }
         public static void ReadFile(IndexNode node, EntryInfo entry, Stream stream, Engine engine)
         {
             var dataPage = PageFactory.GetDataPage(node.DataPageID, engine.Reader, false);
@@ -251,10 +289,64 @@ namespace Numeria.IO
                     curReadPos = 0;
                     toReadLen = dataPage.DataBlockLength;
                 }
-            }
-
+            } 
         }
+        public static void ReadOnlyFileContent(IndexNode node, EntryInfo entry, Stream stream, Engine engine)
+        {
+            var dataPage = PageFactory.GetDataPage(node.DataPageID, engine.Reader, false);
+            int metaDataStartPos = 0;
+            int metaDataLength = entry.FileMetadataLength;
+            int dataStartPos = metaDataStartPos + metaDataLength;
 
+
+            //if (dataPage != null && entry.FileMetadataLength > 0)
+            //{
+            //    //first round
+            //    //read file meta data
+            //    while (curReadPos < metaDataLength)
+            //    {
+            //        //1.marker
+            //        byte marker = ReadByte(dataPage.DataBlock, curReadPos, out curReadPos);
+            //        switch (marker)
+            //        {
+            //            case 1://date time
+            //                long binaryTime = ReadInt64(dataPage.DataBlock, curReadPos, out curReadPos);
+            //                entry.FileDateTime = DateTime.FromBinary(binaryTime);
+            //                break;
+            //            case 2:
+            //                //long filename
+            //                int nameLen = (int)ReadUInt16(dataPage.DataBlock, curReadPos, out curReadPos);
+            //                byte[] nameBuffer = new byte[nameLen];
+            //                Array.Copy(dataPage.DataBlock, curReadPos, nameBuffer, 0, nameLen);
+            //                entry.FileUrl = System.Text.Encoding.UTF8.GetString(nameBuffer);
+            //                curReadPos += nameLen;
+            //                break;
+            //            default:
+            //                throw new NotSupportedException();
+            //        }
+            //    }
+            //}
+
+            int curReadPos = dataStartPos;
+            //-----------------------------------
+            //data part 
+            int toReadLen = dataPage.DataBlockLength - curReadPos;
+            while (dataPage != null)
+            {
+                stream.Write(dataPage.DataBlock, curReadPos, toReadLen);
+                if (dataPage.NextPageID == uint.MaxValue)
+                {
+                    dataPage = null;
+                }
+                else
+                {
+                    dataPage = PageFactory.GetDataPage(dataPage.NextPageID, engine.Reader, false);
+                    //reset
+                    curReadPos = 0;
+                    toReadLen = dataPage.DataBlockLength;
+                }
+            }
+        }
         public static void MarkAsEmpty(uint firstPageID, Engine engine)
         {
             DataPage dataPage = PageFactory.GetDataPage(firstPageID, engine.Reader, true);
