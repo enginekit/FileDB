@@ -218,14 +218,27 @@ namespace Numeria.IO
                 _engine.PersistPages(); // Persiste as paginas/header que ficaram em memória
 
                 if (_fileStream.CanWrite)
+                {
                     _fileStream.Flush();
+                }
 
                 _engine.Dispose();
 
                 _fileStream.Dispose();
             }
         }
+        public void Flush()
+        {
+            if (_engine != null)
+            {
+                _engine.PersistPages(); // Persiste as paginas/header que ficaram em memória
 
+                if (_fileStream.CanWrite)
+                {
+                    _fileStream.Flush();
+                }
+            }
+        }
         /// <summary>
         /// Print debug information about FileDB Structure
         /// </summary>
