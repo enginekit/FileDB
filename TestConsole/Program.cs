@@ -17,12 +17,10 @@ namespace TestConsole
     class Program
     {
         static void Main(string[] args)
-        {
-
+        {   
             //Test1();
             //Test2();
             Test3();
-
         }
 
 
@@ -142,9 +140,16 @@ namespace TestConsole
             //test litebson
             Document doc = new Document();
             doc.Add("first_name", "test_firstname");
-            doc.Add("last_name", "test_lastname");
-
-
+            doc.Add("last_name", "test_lastname"); 
+            BsonWriterSettings setting = new BsonWriterSettings();
+            byte[] outputBuffer;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BsonWriter writer = new BsonWriter(ms, setting);
+                writer.WriteObject(doc);
+                outputBuffer = ms.ToArray();
+                ms.Close();
+            } 
         }
     }
 }
