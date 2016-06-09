@@ -103,6 +103,51 @@ namespace Numeria.IO
 
             return indexNode;
         }
+        public EntryInfo ReadMetadata(Guid id)
+        {
+            // Search from index node
+            var indexNode = Search(id);
+
+            // If index node is null, not found the guid
+            if (indexNode == null)
+                return null;
+
+            // Create a entry based on index node
+            EntryInfo entry = new EntryInfo(indexNode);
+
+            // Read data from the index pointer to stream
+            DataFactory.ReadFileMetadata(indexNode, entry, this);
+
+            return entry;
+        }
+        public void ReadContent(EntryInfo entry, Stream stream)
+        {
+            // Search from index node
+            var indexNode = Search(entry.ID);
+
+            // If index node is null, not found the guid
+            if (indexNode == null) { return; }
+
+
+            // Create a entry based on index node             
+
+            // Read data from the index pointer to stream
+            DataFactory.ReadOnlyFileContent(indexNode, entry, stream, this);
+        }
+        void FillMetadata(EntryInfo entry)
+        {
+            // Search from index node
+            var indexNode = Search(entry.ID);
+
+            // If index node is null, not found the guid
+            if (indexNode == null)
+            {
+                return;
+            }
+            // Read data from the index pointer to stream
+            DataFactory.ReadFileMetadata(indexNode, entry, this);
+        }
+
 
         public EntryInfo Read(Guid id, Stream stream)
         {
@@ -170,7 +215,10 @@ namespace Numeria.IO
                     // Convert node (if is not logicaly deleted) to Entry
                     var node = pageIndex.Nodes[i];
                     if (!node.IsDeleted)
+                    {
+
                         list.Add(new EntryInfo(node));
+                    }
                 }
 
                 // Go to the next page
@@ -179,6 +227,16 @@ namespace Numeria.IO
                 else
                     cont = false;
             }
+            //-------------
+            //read file metadata
+
+            for (int i = list.Count - 1; i >= 0; --i)
+            {
+                FillMetadata(list[i]);
+            }
+            //-------------
+
+            
 
             return list.ToArray();
         }

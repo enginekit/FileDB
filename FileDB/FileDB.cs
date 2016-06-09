@@ -91,6 +91,14 @@ namespace Numeria.IO
             return _engine.Read(id, output);
         }
 
+        public EntryInfo ReadMetadata(Guid id)
+        {
+            return _engine.ReadMetadata(id);
+        }
+        public void ReadContent(EntryInfo en, Stream outputStream)
+        {
+            _engine.ReadContent(en, outputStream);
+        }
         /// <summary>
         /// Retrieve a file inside a database returning a FileDBStream to read
         /// </summary>
@@ -210,14 +218,27 @@ namespace Numeria.IO
                 _engine.PersistPages(); // Persiste as paginas/header que ficaram em memória
 
                 if (_fileStream.CanWrite)
+                {
                     _fileStream.Flush();
+                }
 
                 _engine.Dispose();
 
                 _fileStream.Dispose();
             }
         }
+        public void Flush()
+        {
+            if (_engine != null)
+            {
+                _engine.PersistPages(); // Persiste as paginas/header que ficaram em memória
 
+                if (_fileStream.CanWrite)
+                {
+                    _fileStream.Flush();
+                }
+            }
+        }
         /// <summary>
         /// Print debug information about FileDB Structure
         /// </summary>
