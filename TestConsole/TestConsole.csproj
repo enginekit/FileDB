@@ -43,6 +43,10 @@
       <Project>{5F72F6FB-89BC-439F-989A-5B9581A50CC5}</Project>
       <Name>FileDB</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LiteBson\LiteBson.csproj">
+      <Project>{05b95361-f0ad-4c1d-bf69-828446f73fc0}</Project>
+      <Name>LiteBson</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

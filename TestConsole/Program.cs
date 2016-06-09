@@ -4,6 +4,10 @@ using System.Text;
 using Numeria.IO;
 using System.IO;
 
+using MongoDB.Bson;
+using MongoDB;
+using MongoDB.Util;
+
 #if !NET20
 using System.Threading.Tasks;
 using System.Linq;
@@ -16,7 +20,8 @@ namespace TestConsole
         {
 
             //Test1();
-            Test2();
+            //Test2();
+            Test3();
 
         }
 
@@ -129,6 +134,17 @@ namespace TestConsole
             }); 
             Console.ReadLine();
 #endif
+        }
+
+
+        static void Test3()
+        {
+            //test litebson
+            Document doc = new Document();
+            doc.Add("first_name", "test_firstname");
+            doc.Add("last_name", "test_lastname");
+
+
         }
     }
 }
