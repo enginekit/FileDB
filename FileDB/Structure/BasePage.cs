@@ -5,8 +5,7 @@
         /// <summary>
         /// Data = 1
         /// </summary>
-        Data = 1,
-
+        Data = 1, 
         /// <summary>
         /// Index = 2
         /// </summary>

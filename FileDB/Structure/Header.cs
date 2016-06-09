@@ -3,7 +3,7 @@
     internal class Header
     {
         public const int LOCKER_POS = 98;
-        public const int HEADER_SIZE = 100;
+        public const int FILE_START_HEADER_SIZE = 100;
 
         public static string FileID = "FileDB";        // 6 bytes
         public const short FileVersion = 1;           // 2 bytes

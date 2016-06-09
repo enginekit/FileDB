@@ -18,9 +18,9 @@ namespace Numeria.IO
             sb.AppendLine("Constants:");
             sb.AppendLine("=============");
             sb.AppendLine("BasePage.PAGE_SIZE       : " + BasePage.PAGE_SIZE);
-            sb.AppendLine("IndexPage.HEADER_SIZE    : " + IndexPage.HEADER_SIZE);
+            sb.AppendLine("IndexPage.HEADER_SIZE    : " + IndexPage.INDEX_HEADER_SIZE);
             sb.AppendLine("IndexPage.NODES_PER_PAGE : " + IndexPage.NODES_PER_PAGE);
-            sb.AppendLine("DataPage.HEADER_SIZE     : " + DataPage.HEADER_SIZE);
+            sb.AppendLine("DataPage.HEADER_SIZE     : " + DataPage.DATA_HEADER_SIZE);
             sb.AppendLine("DataPage.DATA_PER_PAGE   : " + DataPage.DATA_PER_PAGE);
 
             sb.AppendLine();
@@ -56,10 +56,8 @@ namespace Numeria.IO
                 {
                     var indexPage = (IndexPage)page;
 
-                    sb.AppendFormat("Keys: {0}", indexPage.NodeIndex + 1);
+                    sb.AppendFormat("Keys: {0}", indexPage.UsedNodeCount + 1);
                 }
-
-
                 sb.AppendLine();
             }
 

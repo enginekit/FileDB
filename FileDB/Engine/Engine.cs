@@ -32,7 +32,7 @@ namespace Numeria.IO
             var freeIndexPage = CacheIndexPage.GetPage(Header.FreeIndexPageID);
 
             // Check if "free page" has no more index to be used
-            if (freeIndexPage.NodeIndex >= IndexPage.NODES_PER_PAGE - 1)
+            if (freeIndexPage.UsedNodeCount >= IndexPage.NODES_PER_PAGE - 1)
             {
                 Header.LastPageID++; // Take last page and increase
                 Header.IsDirty = true;
@@ -48,12 +48,12 @@ namespace Numeria.IO
             else
             {
                 // Has more free index on same index page? return them
-                freeIndexPage.NodeIndex++; // Reserve space
+                freeIndexPage.IncNodeUsed(); // Reserve space
                 return freeIndexPage;
             }
         }
 
-        public DataPage GetPageData(uint pageID)
+        public DataPage GetDataPage(uint pageID)
         {
             if (pageID == Header.LastPageID) // Page does not exists in disk
             {
@@ -76,10 +76,12 @@ namespace Numeria.IO
             var indexNode = IndexFactory.BinaryInsert(entry, rootIndexNode, this);
 
             // In this moment, the index are ready and saved. I use to add the file
-            DataFactory.InsertFile(indexNode, stream, this);
+            DataFactory.InsertFile(indexNode, entry, stream, this);
 
             // Update entry information with file length (I know file length only after read all)
+            entry.FileMetadataLength = indexNode.FileMetaDataLength;
             entry.FileLength = indexNode.FileLength;
+
 
             // Only after insert all stream file I confirm that index node is valid
             indexNode.IsDeleted = false;
@@ -101,6 +103,51 @@ namespace Numeria.IO
 
             return indexNode;
         }
+        public EntryInfo ReadMetadata(Guid id)
+        {
+            // Search from index node
+            var indexNode = Search(id);
+
+            // If index node is null, not found the guid
+            if (indexNode == null)
+                return null;
+
+            // Create a entry based on index node
+            EntryInfo entry = new EntryInfo(indexNode);
+
+            // Read data from the index pointer to stream
+            DataFactory.ReadFileMetadata(indexNode, entry, this);
+
+            return entry;
+        }
+        public void ReadContent(EntryInfo entry, Stream stream)
+        {
+            // Search from index node
+            var indexNode = Search(entry.ID);
+
+            // If index node is null, not found the guid
+            if (indexNode == null) { return; }
+
+
+            // Create a entry based on index node             
+
+            // Read data from the index pointer to stream
+            DataFactory.ReadOnlyFileContent(indexNode, entry, stream, this);
+        }
+        void FillMetadata(EntryInfo entry)
+        {
+            // Search from index node
+            var indexNode = Search(entry.ID);
+
+            // If index node is null, not found the guid
+            if (indexNode == null)
+            {
+                return;
+            }
+            // Read data from the index pointer to stream
+            DataFactory.ReadFileMetadata(indexNode, entry, this);
+        }
+
 
         public EntryInfo Read(Guid id, Stream stream)
         {
@@ -115,7 +162,7 @@ namespace Numeria.IO
             EntryInfo entry = new EntryInfo(indexNode);
 
             // Read data from the index pointer to stream
-            DataFactory.ReadFile(indexNode, stream, this);
+            DataFactory.ReadFile(indexNode, entry, stream, this);
 
             return entry;
         }
@@ -163,12 +210,15 @@ namespace Numeria.IO
 
             while (cont)
             {
-                for (int i = 0; i <= pageIndex.NodeIndex; i++)
+                for (int i = 0; i <= pageIndex.UsedNodeCount; i++)
                 {
                     // Convert node (if is not logicaly deleted) to Entry
                     var node = pageIndex.Nodes[i];
                     if (!node.IsDeleted)
+                    {
+
                         list.Add(new EntryInfo(node));
+                    }
                 }
 
                 // Go to the next page
@@ -177,6 +227,16 @@ namespace Numeria.IO
                 else
                     cont = false;
             }
+            //-------------
+            //read file metadata
+
+            for (int i = list.Count - 1; i >= 0; --i)
+            {
+                FillMetadata(list[i]);
+            }
+            //-------------
+
+            
 
             return list.ToArray();
         }
