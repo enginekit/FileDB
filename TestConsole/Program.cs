@@ -4,9 +4,8 @@ using System.Text;
 using Numeria.IO;
 using System.IO;
 
-using MongoDB.Bson;
-using MongoDB;
-using MongoDB.Util;
+using SharpConnect.Data;
+using SharpConnect.Data.Meltable;
 
 #if !NET20
 using System.Threading.Tasks;
@@ -17,7 +16,7 @@ namespace TestConsole
     class Program
     {
         static void Main(string[] args)
-        {   
+        {
             //Test1();
             //Test2();
             Test3();
@@ -63,8 +62,6 @@ namespace TestConsole
             using (var db = new FileDB(dbFileName, FileAccess.ReadWrite))
             {
                 EntryInfo[] prevFiles = db.ListFiles();
-
-
                 int j = storeReqs.Count;
                 for (int i = 0; i < j; ++i)
                 {
@@ -137,19 +134,94 @@ namespace TestConsole
 
         static void Test3()
         {
-            //test litebson
-            Document doc = new Document();
-            doc.Add("first_name", "test_firstname");
-            doc.Add("last_name", "test_lastname"); 
-            BsonWriterSettings setting = new BsonWriterSettings();
-            byte[] outputBuffer;
-            using (MemoryStream ms = new MemoryStream())
+
+            string dbFileName = @"d:\\WImageTest\\testdb3.dat";
+#if DEBUG
+            if (File.Exists(dbFileName))
             {
-                BsonWriter writer = new BsonWriter(ms, setting);
-                writer.WriteObject(doc);
-                outputBuffer = ms.ToArray();
+                File.Delete(dbFileName);
+            }
+#endif
+
+            using (var db = new FileDB(dbFileName, FileAccess.ReadWrite))
+            {
+                byte[] docStream = TestGenLqDocStream();
+                //save
+                using (var dataStream = new MemoryStream(docStream))
+                {
+                    db.Store(dbFileName, dataStream);
+                    db.Flush();
+                }
+            }
+
+            //test read file
+            //and generate liquid document
+            using (var db = new FileDB(dbFileName, FileAccess.ReadWrite))
+            {
+                EntryInfo[] prevFiles = db.ListFiles();
+                //test read file
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    db.Read(prevFiles[0].ID, ms);
+                    ms.Position = 0;
+
+                    //convert data to document
+                    var docDeser = new LiquidDocumentDeserializer();
+                    var reader = new BinaryReader(ms);
+                    docDeser.SetBinaryReader(reader);
+                    docDeser.ReadDocument();
+                    LiquidDoc result = docDeser.Result;
+                    ms.Close();
+                }
+            }
+        }
+        static byte[] TestGenLqDocStream()
+        {
+            LiquidDoc doc = new LiquidDoc();
+            var elem = doc.CreateElement("user_info");
+            doc.DocumentElement = elem;
+            elem.AppendAttribute("first_name", "A");
+            elem.AppendAttribute("last_name", "B");
+            elem.AppendAttribute("age", 20);
+
+            //test native array object            
+            elem.AppendAttribute("memberlist1", new string[] { "x", "y", "z" });
+            elem.AppendAttribute("memberlist2", new object[] { 1, "y", "z" });
+
+            Dictionary<string, int> memberlist3 = new Dictionary<string, int>();
+            memberlist3.Add("score1", 10);
+            memberlist3.Add("score2", 20);
+            memberlist3.Add("score3", 30);
+            memberlist3.Add("score4", 40);
+            elem.AppendAttribute("memberlist3", memberlist3);
+
+            List<int> memberlist4 = new List<int>() { 1, 2, 3, 4, 5 };
+            elem.AppendAttribute("memberlist4", memberlist4);
+
+
+            byte[] output = null;
+            using (var ms = new MemoryStream())
+            {
+                var ser = new LiquidSerializer();
+                var binWriter = new BinaryWriter(ms);
+                ser.SetBinaryWriter(binWriter);
+
+                ser.WriteDocument(doc);
+
+                output = ms.ToArray();
                 ms.Close();
-            } 
+            }
+            return output;
+
+            //using (var ms = new MemoryStream(output))
+            //{
+            //    var docDeser = new LiquidDocumentDeserializer();
+
+            //    var reader = new BinaryReader(ms);
+            //    docDeser.SetBinaryReader(reader);
+            //    docDeser.ReadDocument();
+            //    LiquidDoc result = docDeser.Result;
+            //}
         }
     }
 }
